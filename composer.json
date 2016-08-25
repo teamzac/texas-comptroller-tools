@@ -1,6 +1,6 @@
 {
     "name": "teamzac/texas-comptroller-tools",
-    "description": "Scrape data from the Texas Comptroller's local sales tax reports",
+    "description": "Tools to get data from the Texas Comptroller's web site",
     "keywords": ["openzac", "zactax", "sales tax", "comptroller"],
     "version": "1.0",
     "type": "project",
