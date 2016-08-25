@@ -90,28 +90,13 @@ Although it's a bit overkill to nest the data so deeply, it was done to retain c
 
 ### Exceptions
 
-You should use the fluent report generator methods to create your request. If you fail to do so, you may receive one of two exceptions, which you may check for:
-
-The `MissingEndpoint` exception will be thrown if the URL endpoint is not set.
-
-The `MissingReportParameters` exception will be thrown if there are no parameters to provide with the request.
-
-Both of these values are set when using the fluent report generator methods shown above.
-
-
-## Changelog
-
-Please see [CHANGELOG](CHANGELOG.md) for more information what has changed recently.
+You should use the fluent report generator methods to create your request. If you fail to do so, you may receive an `InvalidRequest` exception, which you may catch.
 
 ## Testing
 
 ``` bash
 $ composer test
 ```
-
-## Contributing
-
-Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
 
 ## Security
 
