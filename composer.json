@@ -1,0 +1,35 @@
+{
+    "name": "teamzac/texas-comptroller-tools",
+    "description": "Scrape data from the Texas Comptroller's local sales tax reports",
+    "keywords": ["openzac", "zactax", "sales tax", "comptroller"],
+    "version": "1.0",
+    "type": "project",
+    "license": "MIT",
+    "require": {
+        "php": ">=5.6.4",
+        "nesbot/carbon": "~1.20",
+        "illuminate/support": "5.3.*",
+        "guzzlehttp/guzzle": "~5.3|~6.0",
+        "emanueleminotto/simple-html-dom": "^1.5"
+    },
+    "require-dev": {
+        "mockery/mockery": "0.9.*",
+        "phpunit/phpunit": "~4.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "TeamZac\\TexasComptroller\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "TeamZac\\TexasComptroller\\Test\\": "tests"
+        }
+    },
+    "config": {
+        "preferred-install": "dist"
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit"
+    }
+}
