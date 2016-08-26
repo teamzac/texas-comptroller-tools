@@ -7,6 +7,9 @@ use TeamZac\TexasComptroller\Exceptions\InvalidRequest;
 
 class AbstractReport
 {
+    /** @var string */
+    protected $baseUri = 'https://mycpa.cpa.state.tx.us/allocation/';
+
     /** @var Guzzle */
     protected $guzzle;
 
@@ -19,7 +22,7 @@ class AbstractReport
     public function __construct()
     {
         $this->guzzle = new Guzzle([
-            'base_uri' => 'https://mycpa.cpa.state.tx.us/allocation/',
+            'base_uri' => $this->baseUri,
             'cookies' => true
         ]);
     }
@@ -54,12 +57,12 @@ class AbstractReport
      */
     public function get()
     {
-        if ( $this->endpoint == null )
+        if ( $this->endpoint === null )
         {
             throw new InvalidRequest;
         }
 
-        if ( $this->params == null )
+        if ( $this->params === null )
         {
             throw new InvalidRequest;
         }
