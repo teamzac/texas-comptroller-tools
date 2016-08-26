@@ -2,7 +2,7 @@
     "name": "teamzac/texas-comptroller-tools",
     "description": "Tools to get data from the Texas Comptroller's web site",
     "keywords": ["openzac", "zactax", "sales tax", "comptroller"],
-    "version": "1.0",
+    "version": "1.0.1",
     "type": "project",
     "license": "MIT",
     "require": {
