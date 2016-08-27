@@ -143,7 +143,7 @@ class PaymentDetail extends AbstractReport
      */
     public function cleanComponent($text)
     {
-        return Str::slug( str_replace('prd', 'period', $text) );
+        return Str::slug( str_replace('prd', 'period', strtolower($text)) );
     }
 
 }
