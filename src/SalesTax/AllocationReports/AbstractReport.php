@@ -19,6 +19,9 @@ class AbstractReport
     /** @var string */
     protected $endpoint;
 
+    /**
+     * Constructor
+     */
     public function __construct()
     {
         $this->guzzle = new Guzzle([
