@@ -10,7 +10,6 @@ class ComparisonSummaryTest extends PHPUnit_Framework_TestCase
         $report = new ComparisonSummary;
 
         $report->forCities();
-        var_dump($report->get());
     }
 
     /** @test */
