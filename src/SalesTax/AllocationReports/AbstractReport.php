@@ -70,8 +70,8 @@ class AbstractReport
             throw new InvalidRequest;
         }
 
-        $html = $this->submitFormRequest();
-        return $this->parseHtml($html);
+        $response = $this->submitFormRequest();
+        return $this->parseResponse($response);
     }
 
     /**
@@ -88,12 +88,12 @@ class AbstractReport
     }
 
     /**
-     * Parse the HTML and return a collection of periods, to be overriden by subclasses   
+     * Parse the response and return the results, to be overriden by subclasses   
      *
-     * @param   string $html
+     * @param   string $response
      * @return  mixed
      */
-    protected function parseHtml($html)
+    protected function parseResponse($response)
     {
         return [];
     }

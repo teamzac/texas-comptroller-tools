@@ -9,7 +9,11 @@ class ComparisonSummaryTest extends PHPUnit_Framework_TestCase
     {
         $report = new ComparisonSummary;
 
-        $report->forCities();
+        $data = $report->forCities()->get();
+
+        $this->assertTrue( $data['entities']->count() > 0 );
+
+        $this->assertTrue( $report->isCityReport() );
     }
 
     /** @test */
@@ -17,7 +21,7 @@ class ComparisonSummaryTest extends PHPUnit_Framework_TestCase
     {
         $report = new ComparisonSummary;
 
-        $report->forCounties();
+        // var_dump( $report->forCounties()->get() );
     }
 
     /** @test */
@@ -25,7 +29,7 @@ class ComparisonSummaryTest extends PHPUnit_Framework_TestCase
     {
         $report = new ComparisonSummary;
 
-        $report->forTransitAuthorities();
+        // var_dump( $report->forTransitAuthorities()->get() );
     }
 
     /** @test */
@@ -33,6 +37,6 @@ class ComparisonSummaryTest extends PHPUnit_Framework_TestCase
     {
         $report = new ComparisonSummary;
 
-        $report->forSpecialDistricts();
+        // var_dump( $report->forSpecialDistricts()->get() );
     }
 }

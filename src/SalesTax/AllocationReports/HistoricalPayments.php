@@ -80,14 +80,14 @@ class HistoricalPayments extends AbstractReport
     }
 
     /**
-     * Parse the HTML and return a collection of periods    
+     * Parse the response and return a collection of periods    
      *
-     * @param   string $html
+     * @param   string $response
      * @return  array
      */
-    protected function parseHtml($html)
+    protected function parseResponse($response)
     {
-        $domParser = str_get_html($html);
+        $domParser = str_get_html($response);
         
         $tables = $domParser->find('.resultsTable');
 

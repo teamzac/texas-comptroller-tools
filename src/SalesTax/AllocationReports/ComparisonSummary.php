@@ -8,9 +8,16 @@ use Illuminate\Support\Collection;
 
 class ComparisonSummary extends AbstractReport
 {
-    protected $baseUri = 'http://comptroller.texas.gov/taxinfo/allocsum/';
+    protected $baseUri = 'https://www.comptroller.texas.gov/transparency/local/allocations/sales-tax/';
 
     protected $params = [];
+
+    /**
+     * The report type
+     *
+     * @var string (city|county|transit|spd)
+     */
+    protected $reportType;
 
     /**
      * Get the report for cities
@@ -19,7 +26,9 @@ class ComparisonSummary extends AbstractReport
      */
     public function forCities()
     {
-        $this->endpoint = 'cities.html';
+        $this->endpoint = 'scripts/cities-load.php';
+
+        $this->reportType = 'city';
 
         return $this;
     }
@@ -31,7 +40,9 @@ class ComparisonSummary extends AbstractReport
      */
     public function forCounties()
     {
-        $this->endpoint = 'counties.html';
+        $this->endpoint = 'scripts/counties-load.php';
+
+        $this->reportType = 'county';
 
         return $this;
     }
@@ -43,7 +54,9 @@ class ComparisonSummary extends AbstractReport
      */
     public function forTransitAuthorities()
     {
-        $this->endpoint = 'mta_ctd.html';
+        $this->endpoint = 'transit/scripts/transit-load.php';
+
+        $this->reportType = 'transit';
 
         return $this;
     }
@@ -55,30 +68,28 @@ class ComparisonSummary extends AbstractReport
      */
     public function forSpecialDistricts()
     {
-        $this->endpoint = 'specdist.html';
+        $this->endpoint = 'special-district/scripts/spd-load.php';
+
+        $this->reportType = 'spd';
 
         return $this;
     }
 
     /**
-     * Parse the HTML and return a collection of periods    
+     * Parse the response and return a collection of periods    
      *
-     * @param   string $html
+     * @param   string $response
      * @return  array
      */
-    protected function parseHtml($html)
+    protected function parseResponse($response)
     {
-        $domParser = str_get_html($html);
+        $json = json_decode($response);
 
-        $reportMonth = $this->getReportMonth($domParser);
+        $reportMonth = $this->getReportMonth($json);
         
-        $data = $this->getTableData($domParser);
-
-        $entities = $data->filter( function($row) {
-            return ! $this->shouldIgnoreRow($row);
-        })->map( function($row) {
+        $entities = collect($json)->map( function($row) {
             return $this->parseRow($row);
-        });
+        })->sortBy('entity');
 
         return [
             'month' => $reportMonth,
@@ -92,30 +103,11 @@ class ComparisonSummary extends AbstractReport
      * @param   
      * @return  Carbon\Carbon
      */
-    public function getReportMonth($domParser)
+    public function getReportMonth($json)
     {
-        $content = $domParser->find('div#content', 0);
-        $h1 = $content->find('h1',0);
+        $firstEntry = $json[0];
 
-        if ( !preg_match($this->monthPattern(), $h1->innertext, $matches) )
-        {
-            throw new \Exception('Could not determine what month this report is for');
-        }
-
-        return $this->mapTextToDate($matches[0]);
-    }
-
-    /**
-     * 
-     * 
-     * @param   
-     * @return  Illuminate\Support\Collection
-     */
-    public function getTableData($domParser)
-    {
-        $data = $domParser->find('table.datart',0)->find('tr');
-        $thead = array_shift($data);
-        return Collection::make($data);
+        return new Carbon( sprintf("%s/1/%s", $firstEntry->report_month, $firstEntry->report_year) );
     }
 
     /**
@@ -148,16 +140,14 @@ class ComparisonSummary extends AbstractReport
      */
     public function parseRow($row)
     {
-        $entity = trim($row->find('th', 0)->innertext);
-
-        $indexes = $this->getIndexHash();
+        $keys = $this->getHashKeys();
 
         return [
-            'entity' => $entity,
-            'amount' => $this->cleanTableCellText( $row->find('td', $indexes['amount'])->innertext ),
-            'amount_delta' => $this->cleanTableCellText( $row->find('td', $indexes['amount_delta'])->innertext ),
-            'ytd' => $this->cleanTableCellText( $row->find('td', $indexes['ytd'])->innertext ),
-            'ytd_delta' => $this->cleanTableCellText( $row->find('td', $indexes['ytd_delta'])->innertext ),
+            'entity' => $row->{$keys['entity']},
+            'amount' => $row->{$keys['amount']},
+            'amount_delta' => isset($row->{$keys['amount_delta']}) ? $row->{$keys['amount_delta']} * 100 : 0,
+            'ytd' => $row->{$keys['ytd']},
+            'ytd_delta' => isset($row->{$keys['ytd_delta']}) ? $row->{$keys['ytd_delta']} * 100 : 0
         ];
     }
 
@@ -168,69 +158,36 @@ class ComparisonSummary extends AbstractReport
      */
     public function isCityReport()
     {
-        return $this->endpoint == 'cities.html';
+        return $this->reportType == 'city';
     }
 
     /**
+     * Get the key hash for this specific report type, since the keys
+     * are different for some reason that makes absolutely no sense
      * 
-     * 
-     * @param   
-     * @return  
+     * @return  array
      */
-    public function getIndexHash()
+    public function getHashKeys()
     {
-        if ( $this->isCityReport() )
+        if ( $this->reportType == 'city' ) 
         {
             return [
-                'amount' => 0,
-                'amount_delta' => 2,
-                'ytd' => 3,
-                'ytd_delta' => 5
+                'entity' => 'city',
+                'amount' => 'net_payment_this_period',
+                'amount_delta' => 'period_percent_change',
+                'ytd' => 'payments_to_date',
+                'ytd_delta' => 'ytd_percent_change'
             ];
         }
-
-        return [
-            'amount' => 1,
-            'amount_delta' => 3,
-            'ytd' => 4,
-            'ytd_delta' => 6
-        ];
-    }
-
-    /**
-     * 
-     *
-     * @param   
-     * @return  
-     */
-    private function cleanTableCellText($text)
-    {
-        $cleanText = trim(str_replace([',', '%'], '', $text));
-        if ( $cleanText == 'U/C' ) return null;
-        return round($cleanText, 2);
-    }
-
-    /**
-     * 
-     * 
-     * @param   
-     * @return  
-     */
-    protected function monthPattern()
-    {
-        return '/(January|February|March|April|May|June|July|August|September|November|December) \d{4}/';
-    }
-
-    /**
-     * 
-     * 
-     * @param   
-     * @return  
-     */
-    public function shouldIgnoreRow($row)
-    {
-        $entity = trim($row->find('th', 0)->innertext);
-
-        return $entity == 'TOTALS' || $entity == '' || strlen($entity) == 0;
+        else 
+        {
+            return [
+                'entity' => 'name',
+                'amount' => 'net_payment_this_period',
+                'amount_delta' => 'percent_change_prior_year',
+                'ytd' => 'payments_to_date',
+                'ytd_delta' => 'percent_change_to_date'
+            ];
+        }
     }
 }
