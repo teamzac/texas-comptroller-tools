@@ -32,16 +32,6 @@ class TaxpayerEntry
     }
 
     /**
-     * Is this taxpayer a list filter?
-     * 
-     * @return  boolean
-     */
-    public function isListFiler()
-    {
-        return count($this->outlets) == 0;
-    }
-
-    /**
      * Get the taxpayer data
      *
      * @return  array
@@ -72,6 +62,19 @@ class TaxpayerEntry
     }
 
     /**
+     * Is this entry for a list filer (no local presence)?
+     * 
+     * @return  boolean
+     */
+    public function isListFiler()
+    {
+        // default is true
+        if ( ! isset($this->taxpayer['listFiler'] ) ) return true;
+
+        return $this->taxpayer['listFiler'];
+    }
+
+    /**
      * Add information about the taxpayer
      *
      * @param   ReportRow $reportRow
@@ -86,7 +89,8 @@ class TaxpayerEntry
             'city' => $reportRow->taxpayerCity,
             'state' => $reportRow->taxpayerState,
             'zip' => $reportRow->taxpayerZip,
-            'naics' => $reportRow->taxpayerNaics
+            'naics' => $reportRow->taxpayerNaics,
+            'listFiler' => true
         ];
     }
 
@@ -100,6 +104,8 @@ class TaxpayerEntry
     {
         if ( $reportRow->isOutlet() )
         {
+            $this->taxpayer['listFiler'] = false;
+
             $this->addOutlet($reportRow);
         }
 
