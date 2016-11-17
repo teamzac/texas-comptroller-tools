@@ -8,7 +8,8 @@
         "php": ">=5.6.4",
         "nesbot/carbon": "~1.20",
         "illuminate/support": "5.3.*",
-        "guzzlehttp/guzzle": "~5.3|~6.0"
+        "guzzlehttp/guzzle": "~5.3|~6.0",
+        "emanueleminotto/simple-html-dom": "^1.5"
     },
     "require-dev": {
         "mockery/mockery": "0.9.*",
