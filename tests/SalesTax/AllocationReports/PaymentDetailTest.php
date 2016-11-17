@@ -26,6 +26,8 @@ class PaymentDetailTest extends PHPUnit_Framework_TestCase
 
         $this->assertEquals('CtyCntyAllDtlResults', $endpoint);
         $this->assertEquals($queryTerm, $params['cityCountyName']);
+
+        $this->assertEquals(24, count($report->get()));
     }
 
     /** @test */
