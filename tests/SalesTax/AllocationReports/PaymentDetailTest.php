@@ -28,6 +28,7 @@ class PaymentDetailTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($queryTerm, $params['cityCountyName']);
 
         $this->assertEquals(24, count($report->get()));
+        $this->assertEquals(2227016, $report->getAuthorityCode());
     }
 
     /** @test */

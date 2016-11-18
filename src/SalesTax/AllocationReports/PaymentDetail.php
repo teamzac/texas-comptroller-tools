@@ -7,6 +7,8 @@ use Illuminate\Support\Str;
 
 class PaymentDetail extends AbstractReport
 {
+    protected $authorityCode;
+
     /**
      * 
      * 
@@ -88,6 +90,8 @@ class PaymentDetail extends AbstractReport
     protected function parseResponse($response)
     {
         $domParser = str_get_html($response);
+
+        $this->setAuthorityCode($domParser);
         
         $tables = $domParser->find('.resultsTable');
 
@@ -133,6 +137,33 @@ class PaymentDetail extends AbstractReport
         );
 
         return (new Carbon($text))->format('Y-m-d');
+    }
+
+    /**
+     * Get the authority code, which is saved while parsing the response
+     * 
+     * @return  integer
+     */
+    public function getAuthorityCode()
+    {
+        return $this->authorityCode;
+    }
+
+    /**
+     * Fetch and set the authority code
+     * 
+     * @param   $domParser
+     * @return  void
+     */
+    public function setAuthorityCode($domParser)
+    {
+        $div = $domParser->find('.resultspageCriteria');
+
+        if ( count($div) == 0 ) return;
+
+        list($name, $code) = explode('<br />', trim($div[0]->innertext));
+        list ($text, $code) = explode(':', trim($code));
+        $this->authorityCode = trim($code);
     }
 
     /**
