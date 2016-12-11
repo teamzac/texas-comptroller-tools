@@ -17,7 +17,7 @@ class PermitReport
     protected $permits;
 
     /** @var string */
-    protected $baseUri = 'http://www.texastransparency.org/Data_Center/files/NEW_SALETX_PERMIT_YYYYMMDD.CSV';
+    protected $baseUri = 'https://www.comptroller.texas.gov/auto-data/odc/NEW_SALETX_PERMIT_YYYYMMDD.CSV';
 
     /**
      * Constructor
@@ -85,6 +85,16 @@ class PermitReport
         }
 
         throw ReportNotFound;
+    }
+
+    /**
+     * Get all of the permits
+     * 
+     * @return  Collection
+     */
+    public function permits()
+    {
+        return $this->permits;
     }
 
     /**
