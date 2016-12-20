@@ -35,7 +35,7 @@ class ConfidentialReportTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('22222222222', $theTaxpayer->number);
         $this->assertEquals(4, count($theTaxpayer->payments()));
         $this->assertEquals(2, count($theTaxpayer->payments()[1]['returns']));
-        $this->assertTrue( ! $theTaxpayer->isListFiler());
+        $this->assertFalse( $theTaxpayer->isListFiler());
     }
 
     /** @test */

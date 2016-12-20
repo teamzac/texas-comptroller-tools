@@ -14,7 +14,7 @@ class PermitReportTest extends PHPUnit_Framework_TestCase
 
         $url = $report->createUrl($date);
 
-        $correctUrl = 'http://www.texastransparency.org/Data_Center/files/NEW_SALETX_PERMIT_20160101.CSV';
+        $correctUrl = 'https://www.comptroller.texas.gov/auto-data/odc/NEW_SALETX_PERMIT_20160101.CSV';
 
         $this->assertEquals($correctUrl, $url);
     }
