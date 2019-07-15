@@ -1,6 +1,6 @@
-# Tools for Scraping data from the Texas Comptroller
+# This package is deprecated
 
-This package contains tools to scrape and/or otherwise acquire data from the Texas Comptroller's web site.
+Please see [teamzac/texas-comptroller](https://github.com/teamzac/texas-comptroller) instead.
 
 ## License
 
